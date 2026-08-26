@@ -1,0 +1,5 @@
+data/
+.nextflow.log*
+.nextflow/
+work/
+results/
