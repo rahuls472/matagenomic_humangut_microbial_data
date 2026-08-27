@@ -3,6 +3,8 @@ nextflow.enable.dsl=2
 include { FASTQC } from './modules/fastqc.nf'
 include { FASTP } from './modules/fastp.nf'
 include { KRAKEN } from './modules/kraken2.nf'
+include {KREPORT2KRONA} from './modules/kreport2krona.nf'
+include {KRONA} from './modules/krona.nf'
 
 
 workflow {
@@ -11,15 +13,26 @@ workflow {
 
     database_ch = Channel.fromPath(params.database)
 
-    // Quality check on raw reads
+    script_ch = Channel.fromPath(
+        "${projectDir}/Script/KrakenTools/kreport2krona.py"
+    )
+
     FASTQC(data_ch)
 
-    // Trim reads
     FASTP(data_ch)
 
-    // Taxonomic classification
     KRAKEN(
-       FASTP.out.trimmed_reads,
+        FASTP.out.trimmed_reads,
         database_ch
+    )
+
+    KREPORT2KRONA(
+        KRAKEN.out.report,
+        script_ch
+    )
+
+
+    KRONA(
+        KREPORT2KRONA.out.krona_input
     )
 }
