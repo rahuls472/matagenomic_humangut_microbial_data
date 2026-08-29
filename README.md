@@ -2,9 +2,16 @@
 
 A modular, reproducible, and containerized **Nextflow DSL2 pipeline** for metagenomic sequencing data analysis.
 
-This pipeline performs quality control, read trimming, taxonomic classification, and interactive visualization using **FastQC, fastp, Kraken2, Kreport2Krona, and Krona**.
+This pipeline performs:
 
-The workflow is designed to be dynamic: users can provide their own sequencing data, Kraken2 database, and output directory directly through command-line parameters.
+- Raw read quality control using **FastQC**
+- Quality filtering and trimming using **fastp**
+- Post-trimming quality control using **FastQC**
+- Taxonomic classification using **Kraken2**
+- Conversion of Kraken2 reports using **Kreport2Krona**
+- Interactive taxonomic visualization using **Krona**
+
+The pipeline is designed to be dynamic, allowing users to provide their own sequencing data, Kraken2 database, and output directory directly through command-line parameters.
 
 ---
 
@@ -36,21 +43,25 @@ Taxonomic Classification
             ▼
          KRONA
 Interactive Visualization
-🛠️ Tools Used
+```
 
-This pipeline uses the following tools:
+## 🛠️ Tools Used
 
-Nextflow – Workflow management system
-FastQC – Sequencing read quality control
-fastp – Quality filtering and read trimming
-Kraken2 – Metagenomic taxonomic classification
-Kreport2Krona – Converts Kraken reports into Krona-compatible format
-Krona – Interactive taxonomic visualization
-Docker – Containerized execution of bioinformatics tools
+The pipeline uses the following tools:
 
-The bioinformatics tools are executed using Docker containers, providing a reproducible environment and reducing dependency conflicts.
+- **Nextflow** – Workflow management system
+- **FastQC** – Sequencing read quality control
+- **fastp** – Quality filtering and read trimming
+- **Kraken2** – Metagenomic taxonomic classification
+- **Kreport2Krona** – Converts Kraken reports into Krona-compatible format
+- **Krona** – Interactive taxonomic visualization
+- **Docker** – Containerized execution of bioinformatics tools
 
-📁 Project Structure
+The bioinformatics tools are executed inside Docker containers, providing a reproducible environment and reducing software dependency conflicts.
+
+## 📁 Project Structure
+
+```text
 metagenomics/
 │
 ├── main.nf
@@ -66,226 +77,284 @@ metagenomics/
 │   └── krona.nf
 │
 └── data/
+```
 
-Note: The data/ directory is not required for running the pipeline. Users can provide input files located anywhere on their system.
+> **Note:** The `data/` directory is optional. Users are not required to place their sequencing files inside the pipeline directory. Input files can be provided from any location on the system.
 
-⚙️ Requirements
+## ⚙️ Requirements
 
 Before running the pipeline, make sure the following software is installed.
 
-1. Java
+### 1. Java
 
 Nextflow requires Java.
 
 Check whether Java is installed:
 
+```bash
 java -version
-2. Nextflow
+```
 
-Install Nextflow using:
+### 2. Nextflow
 
+Install Nextflow:
+
+```bash
 curl -s https://get.nextflow.io | bash
+```
 
 Move Nextflow to a directory available in your system PATH:
 
+```bash
 sudo mv nextflow /usr/local/bin/
+```
 
 Verify the installation:
 
+```bash
 nextflow -version
-3. Docker
+```
 
-The pipeline uses Docker containers to execute bioinformatics tools.
+### 3. Docker
+
+The pipeline uses Docker containers to execute the bioinformatics tools.
 
 Check Docker installation:
 
+```bash
 docker --version
+```
 
 Test Docker:
 
+```bash
 docker run hello-world
-📥 Installation
+```
+
+## 📥 Installation
 
 Clone the repository:
 
+```bash
 git clone https://github.com/rahuls472/matagenomic_humangut_microbial_data.git
+```
 
 Move into the project directory:
 
+```bash
 cd matagenomic_humangut_microbial_data
-🧬 Input Requirements
+```
+
+## 🧬 Input Requirements
 
 The pipeline accepts paired-end FASTQ files.
 
-Example file naming:
+Example input files:
 
+```text
 sample1_1.fastq
 sample1_2.fastq
+```
 
 The sequencing data can be stored anywhere on your computer.
 
 For example:
 
+```text
 /home/user/sequencing_data/
 ├── sample1_1.fastq
 └── sample1_2.fastq
+```
 
 You do not need to copy your sequencing data into the pipeline directory.
 
-🗄️ Kraken2 Database
+## 🗄️ Kraken2 Database
 
 The user must provide the path to a Kraken2 database.
 
 Example:
 
+```text
 /home/user/databases/minikraken2_v2_8GB_201904_UPDATE/
+```
 
-The Kraken2 database is not included in this repository because databases can be very large.
+The Kraken2 database is not included in this repository because Kraken2 databases can be very large.
 
-▶️ Running the Pipeline
+Users should download or build an appropriate Kraken2 database before running the pipeline.
 
-Run the pipeline using the following command:
+## ▶️ Running the Pipeline
 
+Run the pipeline using:
+
+```bash
 nextflow run main.nf \
   --input '/path/to/reads/*_{1,2}.fastq' \
   --database '/path/to/kraken2_database' \
   --output '/path/to/output_directory'
-Example
+```
+
+### Example
+
+```bash
 nextflow run main.nf \
   --input 'data/*_{1,2}.fastq' \
   --database 'data/minikraken2_v2_8GB_201904_UPDATE/' \
   --output '/home/user/metagenomics_results'
+```
 
-The pipeline will process the sequencing data and save all final results in the directory provided through --output.
+The pipeline will process the sequencing data and save the final results in the directory specified using the `--output` parameter.
 
-📌 Pipeline Parameters
-Parameter	Description
---input	Path or pattern for paired-end FASTQ files
---database	Path to the Kraken2 database
---output	Directory where pipeline results will be saved
-📊 Output
+## 📌 Pipeline Parameters
 
-The pipeline generates multiple output files during the analysis.
+| Parameter | Description |
+|---|---|
+| `--input` | Path or file pattern for paired-end FASTQ files |
+| `--database` | Path to the Kraken2 database |
+| `--output` | Directory where pipeline results will be saved |
 
-🔍 Raw Read Quality Control
+## 📊 Output Files
+
+The pipeline generates multiple results during the analysis.
+
+### 🔍 Raw Read Quality Control
 
 FastQC reports for the original sequencing reads.
 
-Example output:
+Example:
 
+```text
 output/
 └── fastqc/
-✂️ Trimmed Reads
+```
 
-Quality-filtered and trimmed reads generated by fastp.
+### ✂️ Trimmed Reads
 
-Example output:
+Quality-filtered and trimmed sequencing reads generated by fastp.
 
+Example:
+
+```text
 output/
 └── fastp/
-🔍 Post-Trimming Quality Control
+```
+
+### 🔍 Post-Trimming Quality Control
 
 FastQC reports generated after read trimming.
 
-Example output:
+Example:
 
+```text
 output/
 └── refastqc/
-🦠 Kraken2 Taxonomic Classification
+```
+
+### 🦠 Kraken2 Taxonomic Classification
 
 Taxonomic classification results generated using Kraken2.
 
-Example output:
+Example:
 
+```text
 output/
 └── kraken2/
-🌳 Krona Visualization
+```
+
+### 🌳 Krona Visualization
 
 Interactive taxonomic visualization generated using Krona.
 
-Example output:
+Example:
 
+```text
 output/
 └── krona/
+```
 
-Open the generated .html file in a web browser to explore the taxonomic composition interactively.
+Open the generated Krona `.html` file in a web browser to explore the taxonomic composition interactively.
 
-🐳 Docker Containers
+## 🐳 Docker Containers
 
 The pipeline uses Docker containers for the bioinformatics software.
 
 Therefore, users do not need to manually install tools such as:
 
-FastQC
-fastp
-Kraken2
-Krona
+- FastQC
+- fastp
+- Kraken2
+- Kreport2Krona
+- Krona
 
-Nextflow automatically uses the containers configured in the pipeline.
+Nextflow automatically pulls and runs the required Docker containers configured in the pipeline.
 
-The first execution may take longer because Docker may need to download the required container images.
+The first pipeline execution may take longer because Docker may need to download the required container images.
 
-🔄 Resume a Failed Pipeline
+## 🔄 Resume a Failed Pipeline
 
-If the pipeline stops because of an error, fix the problem and restart it using the -resume option:
+If the pipeline stops because of an error, fix the problem and restart the pipeline using the `-resume` option:
 
+```bash
 nextflow run main.nf \
   --input '/path/to/reads/*_{1,2}.fastq' \
   --database '/path/to/kraken2_database' \
   --output '/path/to/output_directory' \
   -resume
+```
 
-Nextflow will reuse successfully completed processes instead of running the entire pipeline again.
+Nextflow will reuse successfully completed processes instead of running the entire workflow again.
 
-💡 Features
-✅ Modular Nextflow DSL2 workflow
-✅ Dynamic input file paths
-✅ Dynamic output directory
-✅ User-provided Kraken2 database
-✅ Paired-end FASTQ support
-✅ Raw read quality control
-✅ Read trimming and quality filtering
-✅ Post-trimming quality control
-✅ Kraken2 taxonomic classification
-✅ Krona interactive visualization
-✅ Docker-based reproducible execution
-✅ No manual installation of bioinformatics tools required
-✅ Nextflow caching and resume support
-✅ Easy to run on different systems
-🔮 Future Improvements
+## ✨ Features
+
+- ✅ Modular Nextflow DSL2 workflow
+- ✅ Dynamic input file paths
+- ✅ Dynamic output directory
+- ✅ User-provided Kraken2 database
+- ✅ Paired-end FASTQ support
+- ✅ Raw read quality control
+- ✅ Read trimming and quality filtering
+- ✅ Post-trimming quality control
+- ✅ Kraken2 taxonomic classification
+- ✅ Krona interactive visualization
+- ✅ Docker-based reproducible execution
+- ✅ No manual installation of bioinformatics tools required
+- ✅ Nextflow caching and resume support
+- ✅ Easy to run on different systems
+
+## 🔮 Future Improvements
 
 Possible future improvements include:
 
-Support for single-end sequencing reads
-Support for multiple samples
-MultiQC summary reports
-Host read removal
-Functional metagenomic profiling
-Alpha diversity analysis
-Beta diversity analysis
-Antimicrobial resistance gene detection
-Configurable CPU and memory resources
-Support for Singularity/Apptainer
-Cloud-based execution
-👨‍💻 Author
+- Support for single-end sequencing reads
+- Support for multiple samples
+- MultiQC summary reports
+- Host read removal
+- Functional metagenomic profiling
+- Alpha diversity analysis
+- Beta diversity analysis
+- Antimicrobial resistance gene detection
+- Configurable CPU and memory resources
+- Support for Singularity/Apptainer
+- Cloud-based execution
 
-Rahul Singh
+## 👨‍💻 Author
+
+**Rahul Singh**
 
 Bioinformatics | NGS Data Analysis | Metagenomics | Workflow Development
 
-📄 License
+## 📄 License
 
 This project is intended for educational and research purposes.
 
-🙏 Acknowledgements
+## 🙏 Acknowledgements
 
 This pipeline uses several open-source bioinformatics tools:
 
-Nextflow
-FastQC
-fastp
-Kraken2
-Krona
-Docker
+- Nextflow
+- FastQC
+- fastp
+- Kraken2
+- Krona
+- Docker
 
 Please cite the respective tools when using this pipeline for academic or research purposes.
