@@ -2,7 +2,7 @@ process FASTP {
 
     container 'biocontainers/fastp:v0.19.6dfsg-1-deb_cv1'
 
-    publishDir "results/fastp", mode: 'copy'
+    publishDir "${params.output}/fastp", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)

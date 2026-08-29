@@ -5,11 +5,13 @@ include { FASTP } from './modules/fastp.nf'
 include { KRAKEN } from './modules/kraken2.nf'
 include {KREPORT2KRONA} from './modules/kreport2krona.nf'
 include {KRONA} from './modules/krona.nf'
+include { REFASTQC } from './modules/refastqc.nf'
 
+params.output = "results"
 
 workflow {
 
-    data_ch = Channel.fromFilePairs(params.data)
+    data_ch = Channel.fromFilePairs(params.input)
 
     database_ch = Channel.fromPath(params.database)
 
@@ -20,6 +22,8 @@ workflow {
     FASTQC(data_ch)
 
     FASTP(data_ch)
+
+    REFASTQC(FASTP.out.trimmed_reads)
 
     KRAKEN(
         FASTP.out.trimmed_reads,

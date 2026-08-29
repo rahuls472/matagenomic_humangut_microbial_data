@@ -2,7 +2,7 @@ process KREPORT2KRONA {
 
     container 'python:3.10'
 
-    publishDir "results/krona", mode: 'copy'
+    publishDir "${params.output}/krona", mode: 'copy'
 
     input:
     path report

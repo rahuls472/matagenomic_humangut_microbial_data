@@ -2,7 +2,7 @@ process KRAKEN {
 
     container 'staphb/kraken2:latest'
 
-    publishDir "results/kraken2", mode: 'copy'
+    publishDir "${params.output}/kraken2", mode: 'copy'
 
     input:
     tuple val(sample_id), path(read1), path(read2)

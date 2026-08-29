@@ -1,6 +1,6 @@
 process KRONA {
     container 'staphb/krona:latest'
-    publishDir "results/krona_results", mode: 'copy'
+    publishDir "${params.output}/krona_results", mode: 'copy'
 
     input:
     path krona_input
